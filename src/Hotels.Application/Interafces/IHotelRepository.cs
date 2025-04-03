@@ -9,11 +9,11 @@ namespace Hotels.Application.Interafces
 {
     public interface IHotelRepository
     {
-        Task AddAsync(Hotel hotel);
+        Task<Hotel> AddAsync(Hotel hotel);
         Task<Hotel> GetByIdAsync(Guid id);
         Task<Hotel> GetByNameAsync(string name);
         Task<IEnumerable<Hotel>> GetAllAsync();
-        Task UdpateAsync(Hotel hotel);
-        Task DeleteAsync (Guid id);
+        Task<Hotel> UdpateAsync(Hotel hotel);
+        Task<bool> DeleteAsync (Guid id);
     }
 }

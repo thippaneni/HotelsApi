@@ -8,45 +8,41 @@ using System.Threading.Tasks;
 
 namespace Hotels.Application.Services
 {
-    public class HotelService : IHotelService
+    public class HotelService(IHotelRepository hotelRepository) : IHotelService
     {
-        private readonly IHotelRepository _hotelRepository;
-        public HotelService(IHotelRepository hotelRepository) 
+        public async Task<Hotel> CreateAsync(Hotel hotel)
         {
-            _hotelRepository = hotelRepository;
-        }
-        public async Task CreateAsync(Hotel hotel)
-        {
-            await _hotelRepository.AddAsync(hotel);
+            return await hotelRepository.AddAsync(hotel);
         }
 
-        public async Task DeleteHotelAsync(Guid id)
+        public async Task<bool> DeleteHotelAsync(Guid id)
         {
-            await _hotelRepository.DeleteAsync(id);
+            return await hotelRepository.DeleteAsync(id);
         }
 
         public async Task<IEnumerable<Hotel>> GetAllHOtelsAsync()
         {
-            var hotels = await _hotelRepository.GetAllAsync();
+            var hashcode = hotelRepository.GetHashCode();
+            var hotels = await hotelRepository.GetAllAsync();
             return hotels;
         }
 
         public async Task<Hotel> GetHotelByIdAsync(Guid id)
         {
-            var hotel = await _hotelRepository.GetByIdAsync(id);
+            var hotel = await hotelRepository.GetByIdAsync(id);
             return hotel;
 
         }
 
         public async Task<Hotel> GetHotelByNameAsync(string name)
         {
-            var hotel = await _hotelRepository.GetByNameAsync(name);
+            var hotel = await hotelRepository.GetByNameAsync(name);
             return hotel;
         }
 
-        public async Task UdpateHotelAsync(Hotel hotel)
+        public async Task<Hotel> UdpateHotelAsync(Hotel hotel)
         {
-            await _hotelRepository.UdpateAsync(hotel);
+            return await hotelRepository.UdpateAsync(hotel);
         }
     }
 }
