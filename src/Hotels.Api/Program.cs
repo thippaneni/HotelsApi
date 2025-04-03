@@ -47,14 +47,4 @@ app.MapPost("/hotels", async (IHotelService hotelService, Hotel hotel) =>
     return Results.Created($"/hotels/{createdHotel.Id}", createdHotel);
 });
 
-app.MapGet("/lifecycle", (ITransientService transientService, IScopedService scopedService, ISingletonService singletonService) =>
-{
-    return Results.Ok(new
-    {
-        Transient = transientService.GetOperationId(),
-        Scoped = scopedService.GetOperationId(),
-        Singleton = singletonService.GetOperationId()
-    });
-});
-
 app.Run();

@@ -14,12 +14,6 @@ namespace Hotels.Application
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
             services.AddScoped<IHotelService, HotelService>();
-
-            services.AddTransient<ITransientService, OperationService>();
-            services.AddScoped<IScopedService, OperationService>();
-            services.AddSingleton<ISingletonService, OperationService>();
-
-
             return services;
         }
        
