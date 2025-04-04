@@ -1,18 +1,7 @@
-﻿using Hotels.Application.Interafces;
-using Hotels.Domain.Models;
-using Hotels.Infrastructure.Persistent;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Hotels.Infrastructure.Repository
+﻿namespace Hotels.Infrastructure.Repository
 {
     public class HotelRepository(InMemoryDbContext context) : IHotelRepository
-    {        
-
+    {
         public async Task<Hotel> AddAsync(Hotel hotel)
         {
             await context.Hotels.AddAsync(hotel);
@@ -31,24 +20,33 @@ namespace Hotels.Infrastructure.Repository
         }
 
         public async Task<IEnumerable<Hotel>> GetAllAsync()
-        {            
-            var hotels = await context.Hotels.ToListAsync();
+        {
+            var hotels = await context.Hotels.Include(h => h.Reviews).ToListAsync();            
             return hotels;
         }
 
-        public Task<Hotel> GetByIdAsync(Guid id)
+        public async Task<Hotel> GetByIdAsync(Guid id)
         {
-            throw new NotImplementedException();
+            return await context.Hotels.Include(h => h.Reviews)
+                .FirstOrDefaultAsync(h => h.Id == id);
         }
 
-        public Task<Hotel> GetByNameAsync(string name)
+        public async Task<Hotel> GetByNameAsync(string name)
         {
-            throw new NotImplementedException();
+            return await context.Hotels
+                .FirstOrDefaultAsync(h => h.Name == name);
         }
 
-        public Task<Hotel> UdpateAsync(Hotel hotel)
+        public async Task<Hotel> UdpateAsync(Hotel hotel)
         {
-            throw new NotImplementedException();
+            var existingHotel = await context.Hotels.FindAsync(hotel.Id);
+                        
+            if (existingHotel == null)
+                return null;
+
+            context.Entry(existingHotel).CurrentValues.SetValues(hotel);
+            await context.SaveChangesAsync();
+            return existingHotel;
         }
     }
 }

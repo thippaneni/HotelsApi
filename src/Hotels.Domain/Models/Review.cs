@@ -3,10 +3,10 @@
 namespace Hotels.Domain.Models
 {
     public class Review : BaseEntirty
-    {
-        public string Comment { get; set; }        
-        public string ReviewerName { get; set; }
-
-        public Hotel Hotel { get; set; }
+    {        
+        public string ReviewerName { get; set; } = string.Empty;
+        public string Comment { get; set; } = string.Empty;
+        public int Rating { get; set; }     
+        public Guid HotelId { get; set; }
     }
 }

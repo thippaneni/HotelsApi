@@ -18,6 +18,7 @@ namespace Hotels.Infrastructure
         {
             services.AddDbContext<InMemoryDbContext>(options => options.UseInMemoryDatabase("hotelsDb"));
             services.AddScoped<IHotelRepository, HotelRepository>();
+            services.AddScoped<IReviewRepository, ReviewRepository>();
 
             return services;
         }
