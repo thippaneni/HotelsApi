@@ -1,6 +1,6 @@
 ﻿namespace Hotels.Infrastructure.Repository
 {
-    public class ReviewRepository(InMemoryDbContext _context) : IReviewRepository
+    public class ReviewRepository(ApplicationDbContext _context) : IReviewRepository
     {
         public async Task<Review> AddReviewAsync(Review review)
         {

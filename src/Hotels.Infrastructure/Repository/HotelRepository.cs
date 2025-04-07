@@ -1,6 +1,6 @@
 ﻿namespace Hotels.Infrastructure.Repository
 {
-    public class HotelRepository(InMemoryDbContext context) : IHotelRepository
+    public class HotelRepository(ApplicationDbContext context) : IHotelRepository
     {
         public async Task<Hotel> AddAsync(Hotel hotel)
         {

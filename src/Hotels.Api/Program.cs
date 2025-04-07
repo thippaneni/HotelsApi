@@ -11,9 +11,9 @@ builder.Services.AddSwaggerGen();
 
 
 builder.Services.AddApplication();
-builder.Services.AddInfrastucture();
 
 var config = builder.Configuration;
+builder.Services.AddInfrastucture(config);
 
 var app = builder.Build();
 
