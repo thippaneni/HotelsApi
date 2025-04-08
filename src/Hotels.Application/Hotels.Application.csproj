@@ -7,11 +7,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Mapster" Version="7.4.0" />
+    <PackageReference Include="MediatR" Version="12.5.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Hotels.Domain\Hotels.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="CQRS\Reviews\Commands\" />
+    <Folder Include="CQRS\Reviews\Handlers\" />
+    <Folder Include="CQRS\Reviews\Queries\" />
+    <Folder Include="NewFolder\" />
   </ItemGroup>
 
 </Project>

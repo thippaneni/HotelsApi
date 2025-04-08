@@ -9,11 +9,14 @@ namespace Hotels.Application.Interafces
 {
     public interface IHotelService
     {
+        // Commands
         Task<Hotel> CreateAsync(Hotel hotel);
-        Task<Hotel> GetHotelByIdAsync(Guid id);
-        Task<Hotel> GetHotelByNameAsync(string name);
-        Task<IEnumerable<Hotel>> GetAllHOtelsAsync();
         Task<Hotel> UdpateHotelAsync(Hotel hotel);
         Task<bool> DeleteHotelAsync(Guid id);
+
+        // Queries
+        Task<Hotel> GetHotelByIdAsync(Guid id);
+        Task<Hotel> GetHotelByNameAsync(string name);
+        Task<IEnumerable<Hotel>> GetAllHOtelsAsync();        
     }
 }

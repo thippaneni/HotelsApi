@@ -1,8 +1,15 @@
 using Hotels.Application;
+using Hotels.Application.Configuration;
+using Hotels.Application.CQRS.Hotels.Commands;
+using Hotels.Application.CQRS.Hotels.Queries;
+using Hotels.Application.Dtos;
 using Hotels.Application.Interafces;
 using Hotels.Application.Services;
 using Hotels.Domain.Models;
 using Hotels.Infrastructure;
+using MediatR;
+
+MapperConfiguration.ConfigureMappings();
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,9 +37,9 @@ app.MapGet("/", () => "Hotels Api is ruunnig");
 var hotelsGroup = app.MapGroup("/api/hotels");
 
 // GET all hotels
-hotelsGroup.MapGet("/", async (IHotelService hotelService) =>
+hotelsGroup.MapGet("/", async (IMediator mediator) =>
 {
-    var hotels = await hotelService.GetAllHOtelsAsync();
+    var hotels = await mediator.Send(new GetAllHotelsQuery());
     return Results.Ok(hotels);
 });
 
@@ -43,10 +50,18 @@ hotelsGroup.MapGet("/{id}", async (IHotelService hotelService, Guid id) =>
     return hotel is not null ? Results.Ok(hotel) : Results.NotFound();
 });
 
-// GET hotel by name
+// Create hotel
 hotelsGroup.MapPost("/", async (IHotelService hotelService, Hotel hotel) =>
 {
     var createdHotel = await hotelService.CreateAsync(hotel);
+    return Results.Created($"/hotels/{createdHotel.Id}", createdHotel);
+});
+
+hotelsGroup.MapPost("/m", async (IMediator mediator, HotelDto hotelDto) =>
+{
+    var createHotelCommand = new CreateHotelCommand(hotelDto);
+    var createdHotel = await mediator.Send(createHotelCommand);
+
     return Results.Created($"/hotels/{createdHotel.Id}", createdHotel);
 });
 
