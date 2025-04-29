@@ -1,15 +1,12 @@
 ﻿using Hotels.Application.Interafces;
 using Hotels.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace Hotels.Application.Services
 {
-    public class HotelService(IHotelRepository hotelRepository) : IHotelService
+    public class HotelService(IHotelRepository hotelRepository, ILogger<HotelService> logger) : IHotelService
     {
+        private readonly ILogger<HotelService> _logger = logger;
         public async Task<Hotel> CreateAsync(Hotel hotel)
         {
             return await hotelRepository.AddAsync(hotel);
@@ -29,8 +26,17 @@ namespace Hotels.Application.Services
 
         public async Task<Hotel> GetHotelByIdAsync(Guid id)
         {
-            var hotel = await hotelRepository.GetByIdAsync(id);
-            return hotel;
+            _logger.LogInformation("Fetching hotel with ID: {HotelId} in Service", id);
+            try
+            {
+                var hotel = await hotelRepository.GetByIdAsync(id);
+                return hotel;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Hotel not found with ID: {HotelId}", id);
+                throw;
+            }           
 
         }
 

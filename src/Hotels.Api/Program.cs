@@ -4,6 +4,7 @@ using Hotels.Application.CQRS.Hotels.Commands;
 using Hotels.Application.CQRS.Hotels.Queries;
 using Hotels.Application.Dtos;
 using Hotels.Application.Interafces;
+using Hotels.Application.Middlewares;
 using Hotels.Application.Services;
 using Hotels.Domain.Models;
 using Hotels.Infrastructure;
@@ -23,7 +24,7 @@ var config = builder.Configuration;
 builder.Services.AddInfrastucture(config);
 
 var app = builder.Build();
-
+app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {
@@ -31,6 +32,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+var _logger = app.Services.GetRequiredService<ILogger<Program>>();
 
 app.MapGet("/", () => "Hotels Api is ruunnig");
 
@@ -46,8 +48,18 @@ hotelsGroup.MapGet("/", async (IMediator mediator) =>
 // GET hotel by id
 hotelsGroup.MapGet("/{id}", async (IHotelService hotelService, Guid id) =>
 {
-    var hotel = await hotelService.GetHotelByIdAsync(id);
-    return hotel is not null ? Results.Ok(hotel) : Results.NotFound();
+    _logger.LogInformation("Fetching hotel with ID: {HotelId} in Controller", id);
+    try
+    {
+        var hotel = await hotelService.GetHotelByIdAsync(id);
+        return hotel is not null ? Results.Ok(hotel) : Results.NotFound();
+    }
+    catch (Exception)
+    {
+        _logger.LogError("An error occurred while fetching the hotel with ID: {HotelId}", id);
+        throw;
+    }
+    
 });
 
 // Create hotel
