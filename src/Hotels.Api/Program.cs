@@ -1,3 +1,4 @@
+using Hotels.Api.ExceptionHandlers;
 using Hotels.Application;
 using Hotels.Application.Configuration;
 using Hotels.Application.CQRS.Hotels.Commands;
@@ -9,13 +10,22 @@ using Hotels.Application.Services;
 using Hotels.Domain.Models;
 using Hotels.Infrastructure;
 using MediatR;
+using Serilog;
 
 MapperConfiguration.ConfigureMappings();
 
 var builder = WebApplication.CreateBuilder(args);
 
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.Seq("http://localhost:5341")
+    .CreateLogger();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddSerilog();
+//builder.Services.AddProblemDetails();
 
 
 builder.Services.AddApplication();
@@ -24,7 +34,8 @@ var config = builder.Configuration;
 builder.Services.AddInfrastucture(config);
 
 var app = builder.Build();
-app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
+//app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
+app.UseExceptionHandler(_ => { });
 
 if (app.Environment.IsDevelopment())
 {
@@ -103,6 +114,12 @@ var reviewsGroup = app.MapGroup("/api/reviews");
 reviewsGroup.MapGet("/hotel/{hotelId}", async (Guid hotelId, IReviewService reviewService) =>
 {
     var reviews = await reviewService.GetReviewsByHotelIdAsync(hotelId);
+    return Results.Ok(reviews);
+});
+
+reviewsGroup.MapGet("/v2/hotel/{hotelId}", async (Guid hotelId, IReviewService reviewService) =>
+{
+    var reviews = await reviewService.GetReviewsByHotelIdV2Async(hotelId);
     return Results.Ok(reviews);
 });
 

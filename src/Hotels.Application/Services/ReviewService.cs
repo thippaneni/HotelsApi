@@ -30,6 +30,11 @@ namespace Hotels.Application.Services
             return await _reviewRepository.GetReviewsByHotelIdAsync(hotelId);
         }
 
+        public async Task<List<Review>> GetReviewsByHotelIdV2Async(Guid hotelId)
+        {
+            return await _reviewRepository.GetReviewsByHotelIdV2Async(hotelId);
+        }
+
         public async Task<Review?> UpdateReviewAsync(Review review)
         {
             return await _reviewRepository.UpdateReviewAsync(review);

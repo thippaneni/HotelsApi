@@ -27,9 +27,23 @@
 
         public async Task<List<Review>> GetReviewsByHotelIdAsync(Guid hotelId)
         {
-            return await _context.Reviews
-                .Where(r => r.HotelId == hotelId)
+            IEnumerable<Review> reviews = await _context.Reviews
+                .Where(r => r.HotelId == hotelId && r.Rating > 3)
                 .ToListAsync();
+
+            //var reviewList = reviews.Where(r => r.Rating > 3);
+
+            return reviews.ToList();
+        }
+
+        public async Task<List<Review>> GetReviewsByHotelIdV2Async(Guid hotelId)
+        {
+            IQueryable<Review> reviews = _context.Reviews
+                .Where(r => r.HotelId == hotelId && r.Rating > 3);
+            
+            //var reviewList = reviews.Where(r => r.Rating > 3);
+
+            return await reviews.ToListAsync();
         }
 
         public async Task<Review?> UpdateReviewAsync(Review review)

@@ -14,5 +14,6 @@ namespace Hotels.Application.Interafces
         Task<Review?> CreateReviewAsync(Review review);
         Task<Review?> UpdateReviewAsync(Review review);
         Task<bool> DeleteReviewAsync(Guid id);
+        Task<List<Review>> GetReviewsByHotelIdV2Async(Guid hotelId);
     }
 }
