@@ -9,6 +9,18 @@ namespace Hotels.Application.Services
         private readonly ILogger<HotelService> _logger = logger;
         public async Task<Hotel> CreateAsync(Hotel hotel)
         {
+            _logger.LogInformation("Creating hotel with name: {HotelName}", hotel.Name);
+            if (string.IsNullOrEmpty(hotel.Name))
+            {
+                _logger.LogError("Hotel name is null or empty");
+                throw new ArgumentException("Hotel name cannot be null or empty");
+            }
+            if (hotel.Stars < 1 || hotel.Stars > 5)
+            {
+                _logger.LogError("Hotel stars must be between 1 and 5");
+                throw new ArgumentOutOfRangeException("Stars", "Hotel stars must be between 1 and 5");
+            }
+            _logger.LogInformation("Adding hotel with name: {HotelName}", hotel.Name);
             return await hotelRepository.AddAsync(hotel);
         }
 
@@ -36,8 +48,7 @@ namespace Hotels.Application.Services
             {
                 _logger.LogError(ex, "Hotel not found with ID: {HotelId}", id);
                 throw;
-            }           
-
+            }
         }
 
         public async Task<Hotel> GetHotelByNameAsync(string name)
