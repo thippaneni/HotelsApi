@@ -25,14 +25,7 @@ namespace Hotels.Application.Tests
         public async Task CreateAsync_Should_Add_Hotel_And_Return_It()
         {
             // Arrange
-            var hotel = new Hotel
-            {
-                Address = "Test Address",
-                CreatedBy = "Test User",
-                Name = " Test Hotel1",
-                Description = "Test Hotel Desc",
-                Stars = 3
-            };
+            var hotel = HotelServiceFixture.GetHotel();
 
             _hotelRepo
               .Setup(r => r.AddAsync(It.IsAny<Hotel>()))
@@ -47,17 +40,12 @@ namespace Hotels.Application.Tests
         }
        
         [Fact]
-        public async Task CreateAsync_Should_Throws_Exception_When_Hotel_Is_Empty()
+        public async Task CreateAsync_Should_Throws_Exception_When_Hotel_Name_Is_Empty()
         {
-            // Arrange
-            var hotel = new Hotel
-            {
-                Address = "Test Address",
-                CreatedBy = "Test User",
-                Name = "",
-                Description = "Test Hotel Desc",
-                Stars = 3
-            };
+            // Arrange            
+            var hotel = HotelServiceFixture.GetHotel();
+            hotel.Name = string.Empty;
+
             _hotelRepo
               .Setup(r => r.AddAsync(It.IsAny<Hotel>()))
               .ReturnsAsync(hotel);
@@ -78,7 +66,8 @@ namespace Hotels.Application.Tests
         public async Task CreateAsync_WithInvalidStars_ThrowsArgumentOutOfRangeException(int stars)
         {
             // Arrange
-            var hotel = new Hotel { Name = "Invalid Stars Hotel", Stars = stars };
+            var hotel = HotelServiceFixture.GetHotel();
+            hotel.Stars = stars;
 
             // Act
             Func<Task> act = async () => await _hotelService.CreateAsync(hotel);
