@@ -1,5 +1,7 @@
-﻿using Hotels.Application.Interafces;
+﻿using Azure.Messaging.ServiceBus;
+using Hotels.Application.Interafces;
 using Hotels.Application.Services;
+using Hotels.Infrastructure.Azure;
 using Hotels.Infrastructure.Persistent;
 using Hotels.Infrastructure.Repository;
 using Microsoft.EntityFrameworkCore;
@@ -37,6 +39,9 @@ namespace Hotels.Infrastructure
 
             services.AddScoped<IHotelRepository, HotelRepository>();
             services.AddScoped<IReviewRepository, ReviewRepository>();
+
+            services.AddSingleton(new ServiceBusClient(config["ServiceBus:ConnectionString"]));
+            services.AddScoped<IEventPublisher, AzureServicebusEventPublisher>();
 
             return services;
         }
