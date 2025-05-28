@@ -1,3 +1,4 @@
+using Hotels.Api.BackgroundServices;
 using Hotels.Api.ExceptionHandlers;
 using Hotels.Application;
 using Hotels.Application.Configuration;
@@ -26,7 +27,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddSerilog();
 //builder.Services.AddProblemDetails();
-
+builder.Services.AddHostedService<HotelCreatedEventConsumer>();
 
 builder.Services.AddApplication();
 

@@ -12,13 +12,15 @@ namespace Hotels.Application.Tests
     {
         private readonly Mock<IHotelRepository> _hotelRepo;
         private readonly Mock<ILogger<HotelService>> _logger;
+        private readonly Mock<IEventPublisher> _eventPublisher;
 
         private readonly HotelService _hotelService;
         public HotelServiceTests()
         {
             _hotelRepo = new Mock<IHotelRepository>();
             _logger = new Mock<ILogger<HotelService>>();
-            _hotelService = new HotelService(_hotelRepo.Object, _logger.Object);
+            _eventPublisher = new Mock<IEventPublisher>();
+            _hotelService = new HotelService(_hotelRepo.Object, _logger.Object, _eventPublisher.Object);
         }
 
         [Fact]

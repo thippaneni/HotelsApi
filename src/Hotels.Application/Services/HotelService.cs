@@ -1,12 +1,16 @@
 ﻿using Hotels.Application.Interafces;
+using Hotels.Domain.DomainEvents;
 using Hotels.Domain.Models;
 using Microsoft.Extensions.Logging;
 
 namespace Hotels.Application.Services
 {
-    public class HotelService(IHotelRepository hotelRepository, ILogger<HotelService> logger) : IHotelService
+    public class HotelService(IHotelRepository hotelRepository, 
+        ILogger<HotelService> logger, IEventPublisher publisher) : IHotelService
     {
         private readonly ILogger<HotelService> _logger = logger;
+        private readonly IEventPublisher _publisher = publisher;
+
         public async Task<Hotel> CreateAsync(Hotel hotel)
         {
             _logger.LogInformation("Creating hotel with name: {HotelName}", hotel.Name);
@@ -21,7 +25,24 @@ namespace Hotels.Application.Services
                 throw new ArgumentOutOfRangeException("Stars", "Hotel stars must be between 1 and 5");
             }
             _logger.LogInformation("Adding hotel with name: {HotelName}", hotel.Name);
-            return await hotelRepository.AddAsync(hotel);
+            
+            var createdhotel = await hotelRepository.AddAsync(hotel);
+
+            if (createdhotel != null)
+            {
+                var hotelCreatedEvent = new HotelCreatedEvent()
+                {
+                    Address = createdhotel.Address,
+                    Description = createdhotel.Description,
+                    HotelId = createdhotel.Id,
+                    CreatedAt = createdhotel.CreateAt,
+                    CreatedBy = createdhotel.CreatedBy ?? "",
+                    Name = createdhotel.Name,
+                    Stars = createdhotel.Stars
+                };
+                await _publisher.PublishAsync(hotelCreatedEvent, "hotel-created-topic");
+            }
+            return createdhotel;
         }
 
         public async Task<bool> DeleteHotelAsync(Guid id)
